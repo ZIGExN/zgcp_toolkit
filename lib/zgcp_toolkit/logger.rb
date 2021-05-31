@@ -51,12 +51,10 @@ module ZgcpToolkit
       end
     end
 
-    def error_request(error, **args)
-      env = args.fetch(:env)
-      args.delete(:env)
-      formatted_env = format_env(env)
+    def error_request(error, request, **args)
+      filter_request_params = format_request_env(request)
 
-      error({message: error.message, backtrace: error.backtrace.first(backtrace_limit)}.merge!(formatted_env))
+      error({ message: error.message, backtrace: error.backtrace.first(backtrace_limit) }.merge!(filter_request_params).merge!(args))
     end
 
     def flush!
@@ -65,7 +63,7 @@ module ZgcpToolkit
 
     private
 
-    def format_env(request)
+    def format_request_env(request)
       log_object = {}
       log_object[:request]     = request_filter(request)
       log_object[:session]     = session_filter(request)
@@ -94,7 +92,7 @@ module ZgcpToolkit
       result[:request_method] = request.request_method
       result[:ip_address]     = request.remote_ip
       result[:parameters]     = request.filtered_parameters.inspect
-      result[:timestamp]      = @timestamp
+      result[:timestamp]      = Time.current
       result[:server]         = Socket.gethostname
       result[:process]        = $$
       if defined?(Rails) && Rails.respond_to?(:root)
