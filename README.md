@@ -68,7 +68,11 @@ rescue_from StandardError do |e|
   raise e if Rails.env.development?
 
   logger = ZgcpToolkit::Logger.new(Rails.env)
-  logger.error_request(e, env: request)
+  logger.error_request(e, request)
+
+  # If you want send notity to slack 
+  # logger.error_request(e, request, push_slack: true)
+
   head :internal_server_error
 end
 
