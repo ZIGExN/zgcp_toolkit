@@ -59,6 +59,12 @@ module ZgcpToolkit
       error({message: error.message, backtrace: error.backtrace.first(backtrace_limit)}.merge!(formatted_env))
     end
 
+    def flush!
+      loggers.each { |a| a.flush! }
+    end
+
+    private
+
     def format_env(request)
       log_object = {}
       log_object[:request]     = request_filter(request)
@@ -95,10 +101,6 @@ module ZgcpToolkit
         result[:rails_root] = Rails.root
       end
       result
-    end
-
-    def flush!
-      loggers.each { |a| a.flush! }
     end
   end
 end
