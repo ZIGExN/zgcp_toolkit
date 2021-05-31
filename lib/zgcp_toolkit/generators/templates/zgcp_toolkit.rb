@@ -8,4 +8,4 @@ loggers = [:std_out]
 
 loggers.push(:google_cloud_logging) unless Rails.env.development?
 
-ZgcpToolkit::Configuaration.config.registered_loggers = loggers
+ZgcpToolkit::Logger.config.registered_loggers = loggers
