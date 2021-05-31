@@ -1,7 +1,7 @@
 module ZgcpToolkit::Rake
   module Task
     def execute(args=nil)
-      task_name = self.name.sub(':', '_')
+      task_name = self.name.gsub(':', '_')
       logger = ZgcpToolkit::Logger.new(task_name)
       args.with_defaults(logger: logger)
       super
