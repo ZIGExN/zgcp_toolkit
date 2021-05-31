@@ -57,6 +57,23 @@ namespace :test_log do
 end
 ```
 
+### Controller
+
+you can send controller errors to Google Cloud Loggings
+
+```ruby
+# app/controllers/application_controller.rb
+
+rescue_from StandardError do |e|
+  raise e if Rails.env.development?
+
+  logger = ZgcpToolkit::Logger.new(Rails.env)
+  logger.error_request(e, env: request)
+  head :internal_server_error
+end
+
+```
+
 ### Note on using Pub/Sub and Cloud Function to deliver log to your Slack channel
 
 - Function invocations are charged at a flat rate regardless of the source of the invocation. This includes HTTP function invocations from HTTP requests, events forwarded to background or CloudEvent functions, and invocations resulting from the call API.
