@@ -3,8 +3,8 @@ require_relative 'lib/zgcp_toolkit/version'
 Gem::Specification.new do |spec|
   spec.name          = "zgcp_toolkit"
   spec.version       = ZgcpToolkit::VERSION
-  spec.authors       = "Ngo Trung Hung"
-  spec.email         = "hungnt@zigexn.vn"
+  spec.authors       = "ZIGExN VeNtura developers"
+  spec.email         = "kuruma-dev@zigexn.vn"
 
   spec.summary       = "GCP Toolkit"
   spec.description   = "Manage essential toolset"
