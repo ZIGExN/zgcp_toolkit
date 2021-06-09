@@ -6,6 +6,8 @@ module ZgcpToolkit
   class Logger
     extend Dry::Configurable
 
+    REGEX_VALID_NAME = /^[a-z0-9_]+$/.freeze
+
     AVAILABLE_LOGGERS = {
       std_out: ZgcpToolkit::Logger::Stdout,
       google_cloud_logging: ZgcpToolkit::Logger::GoogleCloudLogging
@@ -17,6 +19,31 @@ module ZgcpToolkit
 
     class Error < StandardError; end
     class UnsupportedLogType < Error; end
+    class InvalidLogName < Error; end
+
+    class << self
+      def create(log_name)
+        raise InvalidLogName, "Log name is invalid. Log name regex is #{REGEX_VALID_NAME.inspect}" unless valid_name?(log_name.to_s)
+
+        logger = Logger.new(log_name.to_s)
+
+        begin
+          yield(logger) if block_given?
+        rescue StandardError => e
+          logger.error(e, push_slack: logger.send_unexpected_error_to_slack)
+          logger.flush!
+        end
+
+        logger
+      end
+
+      private
+
+      def valid_name?(log_name)
+        return true if log_name.match(REGEX_VALID_NAME)
+        false
+      end
+    end
 
     DEFAULT_BACKTRACE_LIMIT = 10
 
