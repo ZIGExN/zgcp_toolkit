@@ -1,3 +1,5 @@
+require 'google/cloud/logging'
+
 module ZgcpToolkit
   class Logger
     class GoogleCloudLogging
