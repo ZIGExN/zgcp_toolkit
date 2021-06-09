@@ -19,19 +19,22 @@ module ZgcpToolkit
 
     class Error < StandardError; end
     class UnsupportedLogType < Error; end
-    class InvalidNaming < Error; end
+    class InvalidLogName < Error; end
 
     class << self
-      attr_accessor :logger
-      
-      def create(log_name, &block)
-        raise InvalidNaming, 'LOG NAME IS INVALID' unless valid_name?(log_name.to_s)
+      def create(log_name)
+        raise InvalidLogName, "Log name is invalid. Log name regex is #{REGEX_VALID_NAME.inspect}" unless valid_name?(log_name.to_s)
 
-        self.logger ||= Logger.new(log_name.to_s)
-        yield(logger)
-      rescue StandardError => e
-        logger.error(e, push_slack: logger.send_unexpected_error_to_slack)
-        logger.flush!
+        logger = Logger.new(log_name.to_s)
+
+        begin
+          yield(logger) if block_given?
+        rescue StandardError => e
+          logger.error(e, push_slack: logger.send_unexpected_error_to_slack)
+          logger.flush!
+        end
+
+        logger
       end
 
       private
