@@ -22,7 +22,6 @@ Next, you need to run the generator:
     $ rails generate zgcp_toolkit
 
 ## Logger
-Each rake task will have its own log file in Cloud Logging. The log file name on Cloud Logging are combined from the rake task `namespace`s and `task name`. The rake task also be able to access the logger object.
 
 Unexpected errors in rake tasks are caught automatically & write to a log file in Cloud Logging. And, by default, when GCP Toolkit caught an unexpected error, it push a key & value (key: `push_slack` with value: `true`) in Cloud Logging Log `jsonPayload` so that the log that should be sent on Slack can be filtered.
 
@@ -30,16 +29,17 @@ Unexpected errors in rake tasks are caught automatically & write to a log file i
 
 ```ruby
 namespace :tcv_transactions do
-  task :daily_import do |t, logger:|
-    logger.info("Heyyyyyy!")
-    # The error message & backtrace are sent to Cloud Logging
-    raise "Heyyyyyy Oops!"
+  task :daily_import
+    ZgcpToolkit::Logger.create(:log_name) do |logger|
+      logger.info("Heyyyyyy!") # You can log anything to console, also google cloud logging
+      Bug.last
+    end
   end
 end
 ```
 
 ```ruby
-logger = ZgcpToolkit::Logger.new(:any_log_name)
+logger = ZgcpToolkit::Logger.new(:log_name)
 logger.info("Heyyyyyy!")
 logger.error(message: "Heyyyyy!", backtrace: ["line-1", "line-2"])
 logger.error(message: "Hello Bug !!", backtrace: ["line-1", "line-2"], push_slack: true)
@@ -50,16 +50,18 @@ logger.warn("Hey hey nyc!")
 
 ```ruby
 namespace :test_log do 
-  task do: :environment do |args, logger:|
-    logger.send_unexpected_error_to_slack = false
-    raise 'errors'
+  task do: :environment
+    ZgcpToolkit::Logger.create(:log_name) do |logger|
+      logger.send_unexpected_error_to_slack = false
+      raise 'errors'
+    end
   end
 end
 ```
 
 ### Controller
 
-you can send controller errors to Google Cloud Loggings
+You can send controller errors to Google Cloud Loggings
 
 ```ruby
 # app/controllers/application_controller.rb

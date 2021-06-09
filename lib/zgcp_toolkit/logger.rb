@@ -6,7 +6,7 @@ module ZgcpToolkit
   class Logger
     extend Dry::Configurable
 
-    REGEX_VALID_NAME = "/[a-zA-Z0-9_]/"
+    REGEX_VALID_NAME = /^[a-z0-9_]+$/.freeze
 
     AVAILABLE_LOGGERS = {
       std_out: ZgcpToolkit::Logger::Stdout,
