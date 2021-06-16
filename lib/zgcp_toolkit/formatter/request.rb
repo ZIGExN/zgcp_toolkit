@@ -7,7 +7,7 @@ module ZgcpToolkit::Formatter
       log_object[:environment] = environment_filter(request)
       log_object
     end
-    
+
     private
 
     attr_accessor :request
