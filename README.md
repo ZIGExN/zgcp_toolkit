@@ -73,7 +73,15 @@ rescue_from StandardError do |e|
   logger.error_request(e, request)
 
   # You can report error (Error Reporting) with: 
-  # logger.report_error_rquest(e, request: request)
+  # ZgcpToolkit::Logger.report_error_rquest(e)
+  
+  # You can custom error before report
+  # ZgcpToolkit::Logger.report_error_rquest e do |event|
+  #   event.http_status     = 200
+  #   event.message         = 'Report Bug'
+  #   event.http_method     = 'GET'
+  #   event.http_user_agent = 'Moliza...'    
+  # end 
 
   # If you want send notity to slack 
   # logger.error_request(e, request, push_slack: true)

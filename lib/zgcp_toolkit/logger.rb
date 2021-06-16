@@ -37,6 +37,16 @@ module ZgcpToolkit
         logger
       end
 
+      def report_error_rquest(error)      
+        if block_given?
+          Google::Cloud::ErrorReporting.report error do |event|
+            yield event
+          end
+        end
+
+        Google::Cloud::ErrorReporting.report error
+      end
+  
       private
 
       def valid_name?(log_name)
@@ -79,17 +89,9 @@ module ZgcpToolkit
     end
 
     def error_request(error, request, **args)
-      filter_request_params = ZgcpToolkit::Formatter::Request.new(request).format_request_env
+      filter_request_params = ZgcpToolkit::Formatter::Request.new.call(request)
 
       error({ message: error.message, backtrace: error.backtrace.first(backtrace_limit) }.merge!(filter_request_params).merge!(args))
-    end
-
-    def report_error_rquest(error, request: nil)      
-      return Google::Cloud::ErrorReporting.report error unless request
-
-      Google::Cloud::ErrorReporting.report error
-
-      error_request(error, request)      
     end
 
     def flush!
