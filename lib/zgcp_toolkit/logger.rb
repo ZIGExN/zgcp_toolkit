@@ -37,14 +37,12 @@ module ZgcpToolkit
         logger
       end
 
-      def report_error_rquest(error)      
-        if block_given?
-          Google::Cloud::ErrorReporting.report error do |event|
-            yield event
-          end
-        end
+      def report_error_rquest(error, request)
+        message = ZgcpToolkit::Formatter::Request.new.format_for_report(error, request)
 
-        Google::Cloud::ErrorReporting.report error
+        Google::Cloud::ErrorReporting.report error do |event|
+          event.message = message
+        end
       end
   
       private
