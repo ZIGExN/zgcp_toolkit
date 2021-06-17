@@ -71,7 +71,7 @@ module ZgcpToolkit
           case log
           when StandardError
             obj = { message: log.message, backtrace: log.backtrace.first(backtrace_limit) }
-            obj.kwargs
+            obj.merge!(kwargs)
             obj
           when Hash
             log
