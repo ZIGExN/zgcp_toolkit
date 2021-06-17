@@ -41,7 +41,7 @@ module ZgcpToolkit
         message = ZgcpToolkit::Formatter::Request.new.format_for_report(request)
 
         Google::Cloud::ErrorReporting.report error do |event|
-          event.message = event.message + '\n\n' + message
+          event.message = event.message + "\n\n" + message
         end
       end
   
