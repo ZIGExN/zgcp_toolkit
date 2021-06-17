@@ -37,7 +37,7 @@ module ZgcpToolkit
         logger
       end
 
-      def report_error_rquest(error, request)
+      def report_error_request(error, request)
         message = ZgcpToolkit::Formatter::Request.new.format_for_report(request)
 
         Google::Cloud::ErrorReporting.report error do |event|
