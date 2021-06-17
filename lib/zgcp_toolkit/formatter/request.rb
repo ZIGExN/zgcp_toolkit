@@ -12,13 +12,13 @@ module ZgcpToolkit::Formatter
       log_object
     end
 
-    def format_for_report(error, request)
+    def format_for_report(request)
       log_object = {}
       log_object[:request]     = beauty_format request_filter(request)
       log_object[:session]     = beauty_format session_filter(request)
       log_object[:environment] = beauty_format separation_environment_filter(request)
 
-      result = log_object.map { |key, value| "#{key.capitalize}:\n#{value}" }.unshift(error.message)
+      result = log_object.map { |key, value| "#{key.capitalize}:\n#{value}\n" }
       result.join("\n")
     end
 

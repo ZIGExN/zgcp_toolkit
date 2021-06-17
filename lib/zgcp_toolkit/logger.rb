@@ -38,10 +38,10 @@ module ZgcpToolkit
       end
 
       def report_error_rquest(error, request)
-        message = ZgcpToolkit::Formatter::Request.new.format_for_report(error, request)
+        message = ZgcpToolkit::Formatter::Request.new.format_for_report(request)
 
         Google::Cloud::ErrorReporting.report error do |event|
-          event.message = message
+          event.message = event.message + '\n\n' + message
         end
       end
   
