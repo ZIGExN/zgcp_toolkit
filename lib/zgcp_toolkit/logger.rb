@@ -1,4 +1,5 @@
 require 'dry/configurable'
+require "google/cloud/error_reporting"
 require 'zgcp_toolkit/logger/stdout'
 require 'zgcp_toolkit/logger/google_cloud_logging'
 
@@ -30,8 +31,7 @@ module ZgcpToolkit
         begin
           yield(logger) if block_given?
         rescue StandardError => e
-          logger.error(e, push_slack: logger.send_unexpected_error_to_slack)
-          logger.flush!
+          Google::Cloud::ErrorReporting.report e
         end
 
         logger
@@ -66,18 +66,18 @@ module ZgcpToolkit
     end
 
     [:debug, :info, :warn, :error, :fatal, :unknown].each do |log_level_method|
-      define_method(log_level_method) do |log, push_slack: false|
+      define_method(log_level_method) do |log, **kwargs|
         log_object =
           case log
           when StandardError
             obj = { message: log.message, backtrace: log.backtrace.first(backtrace_limit) }
-            obj.merge!(push_slack: true) if push_slack
+            obj.kwargs
             obj
           when Hash
             log
           when String
             obj = { message: log }
-            obj.merge!(push_slack: true) if push_slack
+            obj.merge!(kwargs)
             obj
           else
             raise UnsupportedLogType, "#{log.class.name} is not supported!"
