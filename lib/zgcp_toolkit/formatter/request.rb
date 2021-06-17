@@ -24,8 +24,6 @@ module ZgcpToolkit::Formatter
 
     private
 
-    attr_accessor :request
-
     def beauty_format(data)
       data.map { |k,v| "#{k.to_s.indent(4)}: #{v}" }.join("\n")
     end
