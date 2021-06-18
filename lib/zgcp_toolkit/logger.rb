@@ -1,4 +1,5 @@
 require 'dry/configurable'
+require "google/cloud/error_reporting"
 require 'zgcp_toolkit/logger/stdout'
 require 'zgcp_toolkit/logger/google_cloud_logging'
 
@@ -30,13 +31,20 @@ module ZgcpToolkit
         begin
           yield(logger) if block_given?
         rescue StandardError => e
-          logger.error(e, push_slack: logger.send_unexpected_error_to_slack)
-          logger.flush!
+          Google::Cloud::ErrorReporting.report e
         end
 
         logger
       end
 
+      def report_error_request(error, request)
+        message = ZgcpToolkit::Formatter::Request.new.format_for_report(request)
+
+        Google::Cloud::ErrorReporting.report error do |event|
+          event.message = event.message + "\n\n" + message
+        end
+      end
+  
       private
 
       def valid_name?(log_name)
@@ -58,18 +66,18 @@ module ZgcpToolkit
     end
 
     [:debug, :info, :warn, :error, :fatal, :unknown].each do |log_level_method|
-      define_method(log_level_method) do |log, push_slack: false|
+      define_method(log_level_method) do |log, **kwargs|
         log_object =
           case log
           when StandardError
             obj = { message: log.message, backtrace: log.backtrace.first(backtrace_limit) }
-            obj.merge!(push_slack: true) if push_slack
+            obj.merge!(kwargs)
             obj
           when Hash
             log
           when String
             obj = { message: log }
-            obj.merge!(push_slack: true) if push_slack
+            obj.merge!(kwargs)
             obj
           else
             raise UnsupportedLogType, "#{log.class.name} is not supported!"
@@ -79,53 +87,13 @@ module ZgcpToolkit
     end
 
     def error_request(error, request, **args)
-      filter_request_params = format_request_env(request)
+      filter_request_params = ZgcpToolkit::Formatter::Request.new.call(request)
 
       error({ message: error.message, backtrace: error.backtrace.first(backtrace_limit) }.merge!(filter_request_params).merge!(args))
     end
 
     def flush!
       loggers.each { |a| a.flush! }
-    end
-
-    private
-
-    def format_request_env(request)
-      log_object = {}
-      log_object[:request]     = request_filter(request)
-      log_object[:session]     = session_filter(request)
-      log_object[:environment] = environment_filter(request)
-      log_object
-    end
-
-    def environment_filter(request)
-      result = {}
-      request.filtered_env.keys.each do |key|
-        result[key] = request.filtered_env[key]
-      end
-      result
-    end
-
-    def session_filter(request)
-      result = {}
-      result[:session_id]   = request.ssl? ? "[FILTERED]" : request.session['session_id'] || request.env['rack.session.options'][:id].inspect
-      result[:data_session] = request.session.to_hash
-      result
-    end
-
-    def request_filter(request)
-      result = {}
-      result[:url]            = request.url
-      result[:request_method] = request.request_method
-      result[:ip_address]     = request.remote_ip
-      result[:parameters]     = request.filtered_parameters.inspect
-      result[:timestamp]      = Time.current
-      result[:server]         = Socket.gethostname
-      result[:process]        = $$
-      if defined?(Rails) && Rails.respond_to?(:root)
-        result[:rails_root] = Rails.root
-      end
-      result
     end
   end
 end
