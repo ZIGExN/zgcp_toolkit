@@ -46,19 +46,6 @@ logger.error(message: "Hello Bug !!", backtrace: ["line-1", "line-2"], push_slac
 logger.warn("Hey hey nyc!")
 ```
 
-- Set `send_unexpected_error_to_slack` to `false` will delete `push_slack` key from unexpected error log.
-
-```ruby
-namespace :test_log do 
-  task do: :environment
-    ZgcpToolkit::Logger.create(:log_name) do |logger|
-      logger.send_unexpected_error_to_slack = false
-      raise 'errors'
-    end
-  end
-end
-```
-
 ### Controller
 
 You can send controller errors to Google Cloud Loggings
