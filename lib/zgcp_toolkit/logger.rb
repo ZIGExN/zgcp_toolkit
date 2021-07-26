@@ -55,12 +55,11 @@ module ZgcpToolkit
 
     DEFAULT_BACKTRACE_LIMIT = 10
 
-    attr_accessor :send_unexpected_error_to_slack, :backtrace_limit
+    attr_accessor :backtrace_limit
     attr_reader :loggers, :log_name
 
     def initialize(log_name)
       @log_name = log_name
-      @send_unexpected_error_to_slack = true
       @backtrace_limit = DEFAULT_BACKTRACE_LIMIT
       @loggers = ZgcpToolkit::Logger.registered_loggers.map { |logger| logger.new(log_name) }
     end
