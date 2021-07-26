@@ -42,7 +42,7 @@ end
 logger = ZgcpToolkit::Logger.new(:log_name)
 logger.info("Heyyyyyy!")
 logger.error(message: "Heyyyyy!", backtrace: ["line-1", "line-2"])
-logger.error(message: "Hello Bug !!", backtrace: ["line-1", "line-2"], push_slack: true)
+logger.error(message: "Hello Bug !!", backtrace: ["line-1", "line-2"])
 logger.warn("Hey hey nyc!")
 ```
 
@@ -61,9 +61,6 @@ rescue_from StandardError do |e|
 
   # You can report error (Error Reporting) with: 
   # ZgcpToolkit::Logger.report_error_request(e, request)
-
-  # If you want send notity to slack 
-  # logger.error_request(e, request, push_slack: true)
 
   head :internal_server_error
 end
