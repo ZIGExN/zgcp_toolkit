@@ -6,6 +6,7 @@ Manage integration between Rails & Google Cloud services.
 Add this line to your application's Gemfile:
 
 ```ruby
+gem 'stackdriver' # Stackdriver gem auto installs middlewares to catch errors if you are running a Rails app.
 gem 'zgcp_toolkit'
 ```
 
@@ -56,11 +57,8 @@ You can send controller errors to Google Cloud Loggings
 rescue_from StandardError do |e|
   raise e if Rails.env.development?
 
-  logger = ZgcpToolkit::Logger.new(Rails.env)
-  logger.error_request(e, request)
-
-  # You can report error (Error Reporting) with: 
-  # ZgcpToolkit::Logger.report_error_request(e, request)
+  # Useful ENV information will also be sent along with the error
+  ZgcpToolkit::Logger.report_error_request(e, request)
 
   head :internal_server_error
 end
