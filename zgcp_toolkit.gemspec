@@ -25,4 +25,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'stackdriver', '~> 0.20.1'
   spec.add_dependency 'dry-configurable', '~> 0.11.6'
   spec.add_dependency 'google-cloud-error_reporting', '~> 0.42.0'
+  spec.add_development_dependency "rails"
+  spec.add_development_dependency "rspec"
 end

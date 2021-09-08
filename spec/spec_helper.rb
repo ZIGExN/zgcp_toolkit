@@ -1,4 +1,5 @@
 require "bundler/setup"
+require "rails"
 require "zgcp_toolkit"
 
 RSpec.configure do |config|
