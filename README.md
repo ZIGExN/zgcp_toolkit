@@ -81,3 +81,19 @@ end
 - https://cloud.google.com/functions/docs/calling/pubsub
 - https://cloud.google.com/logging/docs/export/configure_export_v2
 - https://cloud.google.com/cloud-build/docs/configure-third-party-notifications#slack_notifications
+
+## Running the tests
+
+- Make sure you have followed the development environment setup before running any tests.
+
+- To run all tests:
+
+```
+bundle exec rspec
+```
+
+- To run a specific file:
+
+```
+bundle exec rspec spec/zgcp_toolkit_spec.rb
+```
