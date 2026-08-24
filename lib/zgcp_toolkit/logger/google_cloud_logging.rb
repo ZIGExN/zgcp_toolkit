@@ -8,7 +8,11 @@ module ZgcpToolkit
 
       class << self
         def client
-          @mutex.synchronize { @client ||= Google::Cloud::Logging.new }
+          @mutex.synchronize do
+            @client = nil if @client_pid != Process.pid
+            @client_pid = Process.pid
+            @client ||= Google::Cloud::Logging.new
+          end
         end
 
         def resource
