@@ -1,4 +1,5 @@
 require 'google/cloud/logging'
+require 'active_support/core_ext/module/delegation'
 
 module ZgcpToolkit
   class Logger
