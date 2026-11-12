@@ -14,9 +14,10 @@ module ZgcpToolkit
       google_cloud_logging: ZgcpToolkit::Logger::GoogleCloudLogging
     }
 
-    setting :registered_loggers, [:std_out, :google_cloud_logging], reader: true do |logger_names|
-      logger_names.map { |n| AVAILABLE_LOGGERS[n] }
-    end
+    setting :registered_loggers,
+            default: [:std_out, :google_cloud_logging],
+            reader: true,
+            constructor: ->(logger_names) { logger_names.map { |n| AVAILABLE_LOGGERS[n] } }
 
     class Error < StandardError; end
     class UnsupportedLogType < Error; end

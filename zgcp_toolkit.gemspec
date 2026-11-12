@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'activesupport', '>= 5.0'
-  spec.add_dependency 'dry-configurable', '~> 0.11.6'
+  spec.add_dependency 'dry-configurable', '>= 0.13', '< 2'
   spec.add_dependency 'google-cloud-error_reporting', '~> 0.42.0'
   spec.add_dependency 'railties', '>= 5.0'
   spec.add_dependency 'stackdriver', '~> 0.20.1'
