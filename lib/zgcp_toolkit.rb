@@ -2,6 +2,7 @@ require "zgcp_toolkit/version"
 
 module ZgcpToolkit; end
 
+require 'zgcp_toolkit/error_event_function_name'
 require 'zgcp_toolkit/logger'
 require 'zgcp_toolkit/formatter/request'
 require 'zgcp_toolkit/generators/zgcp_toolkit_generator'
